@@ -9,7 +9,7 @@
     "build:prod": "node_modules/.bin/webpack --config webpack.config.js --env prod",
     "build:dev": "node_modules/.bin/webpack --config webpack.config.js --env dev",
     "lint": "biome lint src",
-    "start": "node_modules/.bin/webpack serve --env dev",
+    "start": "webpack serve --env dev",
     "test": "jest"
   },
   "dependencies": {
