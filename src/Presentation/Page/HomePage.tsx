@@ -6,19 +6,23 @@ import {
   UserRepository,
 } from '../../Infrastructure/Repository/UserRepository';
 import '../../Domain/user.module';
+import { EventBus } from '../../Framework/EventBus';
+import { frameworkTypes } from '../../Framework/framework.types';
 
 const HomePage: FunctionComponent = () => {
+  const eventBus = container.resolve<EventBus>(frameworkTypes.eventBus);
   const userRepository = container.resolve<UserRepository>(
     userTypes.userRepository,
   );
+
   const [users, setUsers] = useState<UserFetchData[]>();
 
   useEffect(() => {
-    userRepository.triggerFetchAllUsers();
-    const subscription = userRepository.Users$.subscribe((users) =>
-      setUsers(users),
-    );
-    return () => subscription.unsubscribe();
+    eventBus.publish({ type: 'fetchUsersCommand', payload: undefined });
+  }, [eventBus]);
+
+  useEffect(() => {
+    userRepository.Users$.subscribe((users) => setUsers(users));
   }, [userRepository]);
 
   return (
