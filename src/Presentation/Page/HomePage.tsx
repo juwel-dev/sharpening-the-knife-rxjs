@@ -1,3 +1,4 @@
+import '../../Domain/user.module';
 import { FunctionComponent, useEffect, useState } from 'react';
 import { container } from 'tsyringe';
 import { userTypes } from '../../Domain/user.types';
@@ -5,7 +6,6 @@ import {
   UserFetchData,
   UserRepository,
 } from '../../Infrastructure/Repository/UserRepository';
-import '../../Domain/user.module';
 import { EventBus } from '../../Framework/EventBus';
 import { frameworkTypes } from '../../Framework/framework.types';
 

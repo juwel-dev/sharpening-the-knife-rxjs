@@ -21,6 +21,7 @@ export class EventBus implements IEventBus {
     if (!this.subscribers.has(event)) {
       this.subscribers.set(event, []);
     }
+
     this.subscribers.get(event)?.push(callback);
   }
 }

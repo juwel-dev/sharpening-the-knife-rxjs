@@ -1,5 +1,4 @@
-import '../Framework/framework.module';
-import './Handler/fetchUserCommandHandler';
+import './Handler/fetchUsersCommandHandler';
 import { container } from 'tsyringe';
 import { UserRepository } from '../Infrastructure/Repository/UserRepository';
 import { userTypes } from './user.types';
