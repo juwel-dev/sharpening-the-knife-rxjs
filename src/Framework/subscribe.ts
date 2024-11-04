@@ -1,22 +1,23 @@
-import "./framework.module";
-import {container} from "tsyringe";
-import {EventBus} from "./EventBus";
-import {frameworkTypes} from "./framework.types";
+import {container, InjectionToken} from "tsyringe";
+import {filter, Subject} from "rxjs";
+import {TEvent} from "./event";
 
-export function subscribe(eventCommand: string) {
-  return function (target: { new (...arg: never[]): { handle(): void } }) {
-    const eventBus = container.resolve<EventBus>(frameworkTypes.eventBus);
-    // @ts-expect-error - This is a hack to get around the fact that the event type is not known at compile time
-    eventBus.subscribe(eventCommand, () => container.resolve(target).handle());
-  };
-}
+export const globalEvent$ = new Subject<TEvent>();
 
 /**
  * Annotate your class as an event handler
  * the handle method will be called when an event of the specified type is emitted
  *
- * @param eventType
+ * @param eventType - The 'command' that the event handler will listen for
  */
+export function subscribe(eventType: string) {
+  return function (target: InjectionToken<{handle(): void}> ) {
+    globalEvent$
+        .pipe(filter((e) => e.type === eventType))
+        .subscribe(() => container.resolve(target).handle());
+  };
+}
+
 // export function EventHandler<T extends TEvent>(eventType: string | RegExp) {
 //   return function (target: { new (...arg: never[]): { handle(event: T): void } }) {
 //     GlobalEvent$.pipe(

@@ -3,5 +3,6 @@
 @tailwind utilities;
 
 body {
+    background: #0c0c0c;
     font-family: "Roboto";
 }
