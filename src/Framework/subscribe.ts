@@ -1,8 +1,8 @@
-import {container, InjectionToken} from "tsyringe";
-import {filter, Subject} from "rxjs";
-import {TEvent} from "./event";
+import { Subject, filter } from 'rxjs';
+import { type InjectionToken, container } from 'tsyringe';
+import type { TEvent } from './event';
 
-export const globalEvent$ = new Subject<TEvent>();
+export const globalEvent$ = new Subject<TEvent<any>>();
 
 /**
  * Annotate your class as an event handler
@@ -10,11 +10,18 @@ export const globalEvent$ = new Subject<TEvent>();
  *
  * @param eventType - The 'command' that the event handler will listen for
  */
-export function subscribe(eventType: string) {
-  return function (target: InjectionToken<{handle(): void}> ) {
+export function subscribe(eventType: string | RegExp) {
+  return (target: InjectionToken<{ handle(event: TEvent<any>): void }>) => {
     globalEvent$
-        .pipe(filter((e) => e.type === eventType))
-        .subscribe(() => container.resolve(target).handle());
+      .pipe(
+        filter((e) => {
+          if (typeof eventType === 'string') {
+            return e.type === eventType;
+          }
+          return eventType.test(e.type);
+        }),
+      )
+      .subscribe((e) => container.resolve(target).handle(e));
   };
 }
 
